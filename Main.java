@@ -1,8 +1,6 @@
 package com.example;
-
 import java.util.Random;
 import java.util.Arrays;
-
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
@@ -19,6 +17,8 @@ public class Main extends Application{
 
     private TextField nField;
     private TextField kField;
+    private TextField startIndexField;
+    private TextField endIndexField;
     private ScatterChart<Number, Number> grafikas;
     private Label klaidosPranesimas;
     private Button mygtukasGeneruoti;
@@ -26,30 +26,25 @@ public class Main extends Application{
     @Override
     public void start(Stage stage)
     {
-        int n = 10;
-        int k = 20;
-        int[] A = masyvoSukurimas(n, k);
-
-        System.out.println(Arrays.toString(A));
-        NumberAxis xAxis = new NumberAxis(0, n-1, 1);
-        NumberAxis yAxis = new NumberAxis(0, k ,1);
-        grafikas = new ScatterChart<>(xAxis, yAxis);
-
         nField = new TextField();
         nField.setPromptText("Įveskite n");
         kField = new TextField();
         kField.setPromptText("Įveskite k");
 
+        startIndexField = new TextField();
+        startIndexField.setPromptText("Įveskite start");
+        endIndexField = new TextField();
+        endIndexField.setPromptText("Įveskite end");
+
         mygtukasGeneruoti = new Button("Generuoti");
         klaidosPranesimas = new Label();
-
         mygtukasGeneruoti.setOnAction(e -> atnaujintiGrafika());
+        grafikas = new ScatterChart<>(new NumberAxis(), new NumberAxis());
 
         VBox layout = new VBox();
         layout.getChildren().addAll(nField, kField, mygtukasGeneruoti, klaidosPranesimas, grafikas);
         layout.setSpacing(10);
 
-        grafikoSukurimas(A, grafikas, k);
         Scene scena = new Scene(layout, 600, 400);
         stage.setScene(scena);
         stage.setTitle("Scatterplot testas");
@@ -81,6 +76,8 @@ public class Main extends Application{
     {
         String nText = nField.getText();
         String kText = kField.getText();
+        String startIndexText = startIndexField.getText();
+        String endIndexText = endIndexField.getText();
         int n,k;
         try{
             n = Integer.parseInt(nText);
@@ -89,6 +86,12 @@ public class Main extends Application{
         catch(NumberFormatException ex){
             klaidosPranesimas.setText("Įveskite teisingus duomenis");
             return;
+        }
+        try{
+
+        }
+        catch(){
+            
         }
         int[] A = masyvoSukurimas(n, k);
         grafikas.getData().clear();
