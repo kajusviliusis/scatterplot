@@ -22,6 +22,9 @@ public class Main extends Application{
     private ScatterChart<Number, Number> grafikas;
     private Label klaidosPranesimas;
     private Button mygtukasGeneruoti;
+    private int[] A;
+    private int currentn=-1;
+    private int currentk=-1;
 
     @Override
     public void start(Stage stage)
@@ -42,7 +45,7 @@ public class Main extends Application{
         grafikas = new ScatterChart<>(new NumberAxis(), new NumberAxis());
 
         VBox layout = new VBox();
-        layout.getChildren().addAll(nField, kField, mygtukasGeneruoti, klaidosPranesimas, grafikas);
+        layout.getChildren().addAll(nField, kField, startIndexField, endIndexField, mygtukasGeneruoti, klaidosPranesimas, grafikas);
         layout.setSpacing(10);
 
         Scene scena = new Scene(layout, 600, 400);
@@ -68,7 +71,7 @@ public class Main extends Application{
         XYChart.Series<Number, Number> taskuSerija = new XYChart.Series<>();
         for(int i=0;i<A.length;i++)
         {
-            taskuSerija.getData().add(new XYChart.Data<>(i, A[i]));
+            taskuSerija.getData().add(new XYChart.Data<>(i+1, A[i]));
         }
         grafikas.getData().add(taskuSerija);
     }
@@ -76,26 +79,53 @@ public class Main extends Application{
     {
         String nText = nField.getText();
         String kText = kField.getText();
-        String startIndexText = startIndexField.getText();
-        String endIndexText = endIndexField.getText();
         int n,k;
         try{
             n = Integer.parseInt(nText);
             k = Integer.parseInt(kText);
-        }
+            }
         catch(NumberFormatException ex){
             klaidosPranesimas.setText("Įveskite teisingus duomenis");
             return;
+            }
+        if(A==null || n!=currentn || k!=currentk){
+            A = masyvoSukurimas(n, k);
+            currentn=n;
+            currentk=k;
+            grafikas.getData().clear();
+            grafikoSukurimas(A, grafikas, k);
         }
-        try{
+        String startIndexText = startIndexField.getText();
+        String endIndexText = endIndexField.getText();
+        int start=-1;
+        int end=-1;
+        if(startIndexText!="" && endIndexText!="")
+        {
+            try{
+                start = Integer.parseInt(startIndexText);
+                end = Integer.parseInt(endIndexText);
+            }
+            catch(NumberFormatException ex){
+                klaidosPranesimas.setText("Įveskite teisingą intervalą");
+                return;
+            }
 
+            if(start<0 || end >= A.length || start > end)
+            {
+                klaidosPranesimas.setText("Netinkamas intervalas");
+                return;
+            }
         }
-        catch(){
-            
+        int dydis = end-start+1;
+        int[] B = new int[dydis];
+        int bIndex=0;
+        for(int i=start;i<=end;i++)
+        {
+            B[bIndex]=A[i-1];
+            bIndex++;
         }
-        int[] A = masyvoSukurimas(n, k);
         grafikas.getData().clear();
-        grafikoSukurimas(A, grafikas, k);
+        grafikoSukurimas(B, grafikas, k);
     }
     public static void main(String[] args) {
         launch();
