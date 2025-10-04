@@ -23,6 +23,8 @@ public class Main extends Application{
     private Label klaidosPranesimas;
     private Button mygtukasGeneruoti;
     private int[] A;
+    private NumberAxis xAxis;
+    private NumberAxis yAxis;
     private int currentn=-1;
     private int currentk=-1;
 
@@ -42,7 +44,10 @@ public class Main extends Application{
         mygtukasGeneruoti = new Button("Generuoti");
         klaidosPranesimas = new Label();
         mygtukasGeneruoti.setOnAction(e -> atnaujintiGrafika());
-        grafikas = new ScatterChart<>(new NumberAxis(), new NumberAxis());
+
+        xAxis = new NumberAxis();
+        yAxis = new NumberAxis();
+        grafikas = new ScatterChart<>(xAxis, yAxis);
 
         VBox layout = new VBox();
         layout.getChildren().addAll(nField, kField, startIndexField, endIndexField, mygtukasGeneruoti, klaidosPranesimas, grafikas);
@@ -66,8 +71,8 @@ public class Main extends Application{
     }
     public void grafikoSukurimas(int[] A, ScatterChart<Number, Number> grafikas, int k)
     {
-        NumberAxis xAxis = new NumberAxis(0, A.length-1 ,1);
-        NumberAxis yAxis = new NumberAxis(0, k ,1);
+        //NumberAxis xAxis = new NumberAxis(0, A.length-1 ,1);
+        //NumberAxis yAxis = new NumberAxis(0, k ,1);
         XYChart.Series<Number, Number> taskuSerija = new XYChart.Series<>();
         for(int i=0;i<A.length;i++)
         {
@@ -110,7 +115,7 @@ public class Main extends Application{
                 return;
             }
 
-            if(start<0 || end >= A.length || start > end)
+            if(start<0 || end > A.length || start > end)
             {
                 klaidosPranesimas.setText("Netinkamas intervalas");
                 return;
@@ -124,8 +129,24 @@ public class Main extends Application{
             B[bIndex]=A[i-1];
             bIndex++;
         }
-        grafikas.getData().clear();
-        grafikoSukurimas(B, grafikas, k);
+        XYChart.Series<Number, Number> intervaluTaskuSerija = new XYChart.Series<>();
+        for(int i = 0; i < B.length; i++)
+        {
+        intervaluTaskuSerija.getData().add(new XYChart.Data<>(start+i, B[i]));
+        }
+        int maxB = Arrays.stream(B).max().getAsInt();
+        if(B!=null)
+        {
+            xAxis.setAutoRanging(false);
+            xAxis.setLowerBound(start);
+            xAxis.setUpperBound(end);
+            yAxis.setLowerBound(0);
+            yAxis.setUpperBound(maxB);
+            grafikas.getData().clear();
+            //grafikoSukurimas(B, grafikas, maxB);
+            grafikas.getData().add(intervaluTaskuSerija);
+        }
+
     }
     public static void main(String[] args) {
         launch();
